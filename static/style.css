@@ -1,89 +1,125 @@
-/* Import a clean, modern font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+  /* Import a clean, modern font */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    /* Enhanced green gradient with multiple stops */
-    background: linear-gradient(135deg, 
-        #00C853 0%,    /* vivid green */
-        #69F0AE 40%,   /* lighter mint green */
-        #B9F6CA 70%,   /* pale mint */
-        #E8F5E9 100%); /* very light green */
-    color: #333;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg,
+          #00C853 0%,
+          #69F0AE 40%,
+          #B9F6CA 70%,
+          #E8F5E9 100%);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
 
-.container {
-    background: #fff;
-    border-radius: 24px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
-    padding: 40px 60px;
-    max-width: 400px;
-    text-align: center;
-    width: 100%;
-}
-
-h1 {
-    font-weight: 700;
-    font-size: 2.8rem;
-    margin-bottom: 10px;
-    color: #0D6EFD; /* bright blue */
-}
-
-p {
-    font-weight: 300;
-    font-size: 1.1rem;
-    margin-bottom: 40px;
-    color: #555;
-}
-
-.scan-button {
-    display: inline-block;
-    background: linear-gradient(90deg, #0D6EFD, #6610F2);
-    color: #fff;
-    padding: 15px 45px;
-    font-weight: 600;
-    font-size: 1.2rem;
-    border-radius: 50px;
-    box-shadow: 0 6px 15px rgba(13, 110, 253, 0.4);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    user-select: none;
-}
-
-.scan-button:hover {
-    background: linear-gradient(90deg, #6610F2, #0D6EFD);
-    box-shadow: 0 8px 20px rgba(102, 16, 242, 0.6);
-    transform: translateY(-3px);
-}
-
-.scan-button:active {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(102, 16, 242, 0.5);
-}
-
-/* Responsive */
-@media (max-width: 480px) {
     .container {
-        padding: 30px 25px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      padding: 40px 40px 60px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
     }
 
     h1 {
-        font-size: 2rem;
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      color: #0D6EFD; /* bright blue */
+      user-select: none;
     }
 
-    .scan-button {
-        padding: 14px 35px;
-        font-size: 1rem;
+    #scanner-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: black;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+      margin: 30px 0;
+      border: 2px solid #0D6EFD;
     }
-}
+
+    #scanner-container video,
+    #scanner-container canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    #scanner-container canvas {
+      z-index: 2;
+    }
+
+    #scanner-container video {
+      z-index: 1;
+    }
+
+    #scanner-container {
+      width: 640px; /* match your camera width */
+      height: 480px; /* match your camera height */
+  /* rest of your styles */
+    }
+
+
+    #result {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 20px;
+      font-size: 1.2em;
+      flex-wrap: wrap;
+      user-select: none;
+    }
+
+    .info-box {
+      flex: 1 1 140px;
+      text-align: center;
+      padding: 20px 15px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+      box-shadow: 0 6px 15px rgba(0, 150, 136, 0.2);
+      color: #004d40;
+      font-weight: 600;
+      min-width: 150px;
+      transition: background-color 0.3s ease;
+    }
+
+    .info-box strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+      color: #00796b;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 25px 50px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      #result {
+        gap: 25px;
+        font-size: 1.1em;
+      }
+    }

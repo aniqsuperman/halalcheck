@@ -1,15 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Halal Scanner</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Barcode Scanner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Halal Scanner</h1>
-        <p>Scan any product with a barcode. Know if it’s Halal.</p>
-        <a href="#" class="scan-button">📷 Start Scanning</a>
+
+  <h1 style="text-align: center;">Scan a Barcode</h1>
+  <div id="scanner-container"></div>
+  
+  <div id="result">
+    <div class="info-box">
+      <strong>Barcode:</strong>
+      <div id="barcode-value">Waiting...</div>
     </div>
+    <div class="info-box">
+      <strong>Halal Status:</strong>
+      <div id="halal-status">Unknown</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.min.js"></script>
+  <script>
+    const scannerContainer = document.getElementById('scanner-container');
+
+   Quagga.init({
+  inputStream: {
+    type: "LiveStream",
+    target: scannerContainer,
+    constraints: {
+  facingMode: "environment",
+  width: { exact: 640 },
+  height: { exact: 480 }
+  }
+
+  },
+  decoder: {
+    readers: ["ean_reader", "ean_8_reader", "upc_reader", "code_128_reader"]
+  },
+  locate: true
+}, function(err) {
+  if (err) {
+    console.error("Quagga init error:", err);
+    document.getElementById("barcode-value").textContent = "Error initializing scanner";
+    return;
+  }
+  Quagga.start();
+});
+
+Quagga.onProcessed(function(result) {
+  // You can enable this to see processing logs:
+  // console.log('Frame processed:', result);
+  const drawingCtx = Quagga.canvas.ctx.overlay;
+  const drawingCanvas = Quagga.canvas.dom.overlay;
+
+  if (result) {
+    drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+
+    if (result.boxes) {
+      result.boxes
+        .filter(box => box !== result.box)
+        .forEach(box => {
+          Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, {
+            color: "green",
+            lineWidth: 2
+          });
+        });
+    }
+
+    if (result.box) {
+      Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, {
+        color: "#00F",
+        lineWidth: 2
+      });
+    }
+  }
+});
+
+Quagga.onDetected((data) => {
+  if (!data || !data.codeResult || !data.codeResult.code) {
+    console.warn("❌ No valid code detected");
+    return;
+  }
+
+  const code = data.codeResult.code.trim();
+  console.log("✅ Detected (final):", code);
+
+  Quagga.stop();
+
+  document.getElementById("barcode-value").textContent = code;
+  document.getElementById("halal-status").textContent = "Checking...";
+
+  fetch('/api/check-halal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ barcode: code })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('✅ Backend response:', data);
+    document.getElementById("halal-status").textContent =
+      data.halal ? 'Yes ✅' : 'No or Unknown ❓';
+  })
+  .catch(error => {
+    console.error('❌ Fetch error:', error);
+    document.getElementById("halal-status").textContent = "❌ Failed to contact server.";
+  });
+});
+
+  </script>
+
 </body>
 </html>
